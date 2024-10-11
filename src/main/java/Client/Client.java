@@ -24,7 +24,7 @@ public class Client {
         }catch (UnknownHostException ex) {
             System.out.println("Server not found: " + ex.getMessage());
         } catch (IOException ex) {
-            System.out.println("I/O Error: " + ex.getMessage());
+            System.out.println("I/O Error12: " + ex.getMessage());
         }
     }
 
