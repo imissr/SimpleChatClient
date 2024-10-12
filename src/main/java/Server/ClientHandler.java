@@ -25,13 +25,17 @@ public class ClientHandler implements Runnable {
             writer  = new PrintWriter(socket.getOutputStream(),true);
             String username = reader.readLine();
             server.addUserName(username);
+
             String serverMessage = "new user connected:  " + username;
+
+            printUser();
             server.boardcastMessage(serverMessage, this);
 
             String text ;
 
             do{
                 text = reader.readLine();
+                System.out.println("text: " + text);
                 serverMessage = "[" + username + "]: " + text;
                 server.boardcastMessage(serverMessage,this);
             }while(!text.equalsIgnoreCase("exit"));

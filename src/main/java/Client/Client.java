@@ -8,6 +8,7 @@ public class Client {
     private String hostname;
     private String username;
     private int port;
+    private String password;
 
     Client(String hostname , int port){
         this.hostname = hostname;
@@ -24,7 +25,7 @@ public class Client {
         }catch (UnknownHostException ex) {
             System.out.println("Server not found: " + ex.getMessage());
         } catch (IOException ex) {
-            System.out.println("I/O Error12: " + ex.getMessage());
+            System.out.println("I/O Error: " + ex.getMessage());
         }
     }
 
@@ -35,6 +36,14 @@ public class Client {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public static void main(String[] args) {
