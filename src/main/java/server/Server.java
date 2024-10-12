@@ -1,5 +1,4 @@
-package Server;
-
+package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,6 +9,7 @@ public class Server {
     private Set<ClientHandler> clientsHandler = new HashSet<ClientHandler>();
     private Set<String> clientsUsername = new HashSet<>();
     private ServerSocket socket;
+
     int port;
 
     public Server(int port){

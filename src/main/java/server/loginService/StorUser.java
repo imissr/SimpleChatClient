@@ -1,16 +1,15 @@
-package loginSystem;
+package server.loginService;
 
 import Client.Client;
 
-import java.io.IOException;
 import java.sql.*;
 
-public class storUser {
+public class StorUser {
     String url = "jdbc:sqlite:E:\\database\\test.db\\";
 
     private Connection connection;
 
-    public storUser(){
+    public StorUser(){
         this.connect();
     }
 
@@ -25,27 +24,24 @@ public class storUser {
     }
 
 
-    public void insert(Client client){
+    void insert(String username, String passowrd) throws SQLException {
         String query = "INSERT INTO Account(username,password) VALUES(?,?)";
-                try{
-                    PreparedStatement statement = connection.prepareStatement(query);
-                    statement.setString(1, client.getUsername());
-                    statement.setString(2, client.getPassword());
 
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, username);
+        statement.setString(2, passowrd);
 
-
-                } catch (SQLException e) {
-                    System.out.println("faild inserting username and password to the data pase");
-                }
 
 
     }
 
-    public String getPassword(Client client){
+
+    // bad for security reason retriving password and username can be seen in the stack
+    /*private String getPassword(String username){
         String query = "SELECT password from Account WHERE useername = ? ";
         try {
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1,client.getUsername());
+            statement.setString(1,username);
 
             try(ResultSet rs = statement.executeQuery()) {
                 if(rs.next()){
@@ -60,14 +56,15 @@ public class storUser {
 
         }
         return "no password found";
-    }
+    }*/
 
 
-    public boolean checkIfUserExist(Client client ){
-        String query = "SELECT EXISTS(SELECT 1 FROM Account WHERE username = ?) ";
+    boolean validate(String username, String password){
+        String query = "SELECT COUNT(*) AS hits FROM Account WHERE username = ? AND password = ?";
         try{
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1,client.getUsername());
+            statement.setString(1,username);
+            statement.setString(2,password);
             try(ResultSet rst = statement.executeQuery(query)){
                 if (rst.next()){
                     return rst.getInt(1 ) == 1;
@@ -79,7 +76,35 @@ public class storUser {
         return false;
     }
 
-    public void close()  {
+    boolean usernameExists(String username){
+        String query = "SELECT COUNT(*) AS hits FROM Account WHERE username = ?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1,username);
+            try(ResultSet rst = statement.executeQuery(query)){
+                if (rst.next()){
+                    return rst.getInt(1 ) == 1;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("faild finding the username" + e.getMessage());
+        }
+        return false;
+    }
+
+
+
+
+    // usernameNormalization not needed white spaces should not be allowed from the beginning
+    private String usernameNormlaization(String username){
+        return username.trim();
+    }
+
+
+
+
+
+    private void close()  {
         if(connection == null)
             return;
         try {
