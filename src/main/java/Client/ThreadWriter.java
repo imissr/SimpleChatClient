@@ -25,8 +25,10 @@ public class ThreadWriter extends Thread {
 
    public void run(){
 
+        handshake();
+
+
         Console console = System.console();
-       writer.println(client.getUsername());
 
        String text;
 
@@ -43,6 +45,13 @@ public class ThreadWriter extends Thread {
            System.out.println("Error writing to server: " + ex.getMessage());
        }
 
-
    }
+
+
+    public void handshake(){
+        writer.println(client.getUsername());
+        writer.println(client.getPassword());
+        writer.println(client.getChoice());
+    }
+
 }

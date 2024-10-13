@@ -17,11 +17,7 @@ public class Login implements IFLogin {
         return true;
     }
 
-    public boolean register(String username ,String password){
-        if(!Utility.isValidUsername(username)){
-            System.out.println("username contains invalid character");
-            return false;
-        }
+    public boolean register(String username , String password){
         if( database.usernameExists(username)){
             System.out.println("username exists");
             return false;

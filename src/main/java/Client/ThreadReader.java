@@ -38,4 +38,8 @@ public class ThreadReader extends Thread {
 
 
     }
+
+    public String reciveMessage() throws IOException {
+        return reader.readLine();
+    }
 }

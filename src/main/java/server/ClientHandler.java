@@ -1,5 +1,6 @@
 package server;
 
+import Client.Client;
 import server.loginService.StorUser;
 
 import java.io.BufferedReader;
@@ -12,6 +13,10 @@ public class ClientHandler implements Runnable {
     Socket socket;
     Server server;
     PrintWriter writer;
+    String username;
+    String password;
+    BufferedReader reader;
+    int choice;
 
 
 
@@ -24,11 +29,13 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer  = new PrintWriter(socket.getOutputStream(),true);
             printUser();
-            String username = reader.readLine();
+            System.out.println(username);
             server.addUserName(username);
+            String password = reader.readLine();
+            System.out.println(password);
             String serverMessage = "new user connected to the Chat:  " + username;
             server.boardcastMessage(serverMessage, this);
 
@@ -64,6 +71,46 @@ public class ClientHandler implements Runnable {
             writer.println(("no other users connected"));
         }
     }
+
+    boolean checkPasswordAndUsername() throws IOException {
+        username = reader.readLine();
+        password = reader.readLine();
+        choice = Integer.parseInt(reader.readLine());
+
+        switch (choice){
+            case 1 :
+                if(server.loginSuccessful(username,password)){
+                    writer.println("OK");
+                    return true;
+                }
+                writer.println("ERROR");
+                return false;
+
+
+            case 2 :
+                if(!server.registerSuccessful(username,password) ){
+                    writer.println("Error");
+                    return false;
+                }
+                writer.println("OK");
+                return true;
+
+            default:
+                writer.println(false);
+                return false;
+        }
+
+
+
+
+    }
+
+
+
+
+
+
+
 
 
 }

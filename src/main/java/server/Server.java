@@ -1,11 +1,9 @@
 package server;
-import server.loginService.StorUser;
+import server.loginService.Login;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +11,9 @@ public class Server {
     private Set<ClientHandler> clientsHandler = new HashSet<ClientHandler>();
     private Set<String> clientsUsername = new HashSet<>();
     private ServerSocket socket;
+    Login loginService = new Login();
+
+
 
 
     int port;
@@ -61,6 +62,7 @@ public class Server {
         }
     }
 
+
     void removeUser(String userName, ClientHandler aUser) {
         boolean removed = clientsUsername.remove(userName);
         if (removed) {
@@ -81,9 +83,18 @@ public class Server {
         return !this.clientsUsername.isEmpty();
     }
 
+    public boolean loginSuccessful(String username , String password){
+        return loginService.login(username,password);
+    }
+    public boolean registerSuccessful(String username , String password){
+        return loginService.register(username,password);
+    }
+
+
     public static void main(String[] args) {
         Server server = new Server(12345);
         server.init();
     }
+
 }
 
