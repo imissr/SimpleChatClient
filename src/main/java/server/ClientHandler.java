@@ -1,5 +1,7 @@
 package server;
 
+import server.loginService.StorUser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,6 +12,7 @@ public class ClientHandler implements Runnable {
     Socket socket;
     Server server;
     PrintWriter writer;
+
 
 
     public ClientHandler(Socket socket , Server server){
@@ -23,19 +26,17 @@ public class ClientHandler implements Runnable {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer  = new PrintWriter(socket.getOutputStream(),true);
+            printUser();
             String username = reader.readLine();
             server.addUserName(username);
-
-            String serverMessage = "new user connected:  " + username;
-
-            printUser();
+            String serverMessage = "new user connected to the Chat:  " + username;
             server.boardcastMessage(serverMessage, this);
 
             String text ;
 
             do{
+
                 text = reader.readLine();
-                System.out.println("text: " + text);
                 serverMessage = "[" + username + "]: " + text;
                 server.boardcastMessage(serverMessage,this);
             }while(!text.equalsIgnoreCase("exit"));

@@ -1,11 +1,10 @@
 package server.loginService;
 
-import org.apache.commons.lang3.NotImplementedException;
 import util.Utility;
 
 import java.sql.SQLException;
 
-public class login implements IFLogin {
+public class Login implements IFLogin {
 
     StorUser database = new StorUser();
 
@@ -36,7 +35,6 @@ public class login implements IFLogin {
         }
 
         return true;
-
 
     }
 

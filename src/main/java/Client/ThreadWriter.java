@@ -24,15 +24,14 @@ public class ThreadWriter extends Thread {
     }
 
    public void run(){
+
         Console console = System.console();
-       String userName = console.readLine("\nEnter Your name: ");
-       client.setUsername(userName);
-       writer.println(userName);
+       writer.println(client.getUsername());
 
        String text;
 
        do {
-           text = console.readLine("[" + userName + "]: ");
+           text = console.readLine("[" + client.getUsername() + "]: ");
            writer.println(text);
 
        } while (!text.equals("exit"));

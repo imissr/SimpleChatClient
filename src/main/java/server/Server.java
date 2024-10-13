@@ -1,7 +1,11 @@
 package server;
+import server.loginService.StorUser;
+
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,10 +14,12 @@ public class Server {
     private Set<String> clientsUsername = new HashSet<>();
     private ServerSocket socket;
 
+
     int port;
 
     public Server(int port){
         this.port = port;
+
     }
 
     public void init(){
@@ -23,7 +29,7 @@ public class Server {
 
             while(true){
                 Socket clientSocket = socket.accept();
-                System.out.println("New Client Connected: "  + clientSocket.getInetAddress().getHostAddress());
+                System.out.println(" Client Connected: "  + clientSocket.getInetAddress().getHostAddress());
                 ClientHandler client = new ClientHandler(clientSocket,this);
                 clientsHandler.add(client);
                 Thread thread = new Thread(client);

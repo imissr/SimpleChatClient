@@ -10,9 +10,14 @@ public class Client {
     private int port;
     private String password;
 
-    Client(String hostname , int port){
+
+
+    public Client(String hostname , int port ,String username ,String password){
         this.hostname = hostname;
         this.port = port;
+        this.password = password;
+        this.username = username;
+        this.init();
 
     }
 
@@ -46,10 +51,6 @@ public class Client {
         this.password = password;
     }
 
-    public static void main(String[] args) {
 
-        Client client = new Client("localhost", 12345);
-        client.init();
-    }
 
 }

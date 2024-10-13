@@ -1,11 +1,9 @@
 package server.loginService;
 
-import Client.Client;
-
 import java.sql.*;
 
 public class StorUser {
-    String url = "jdbc:sqlite:E:\\database\\test.db\\";
+    String url = "jdbc:sqlite:C:\\Users\\khale\\OneDrive\\Desktop\\test1.db";
 
     private Connection connection;
 
@@ -20,6 +18,7 @@ public class StorUser {
 
         }catch (SQLException e){
             System.out.println("faild connecting to the database" + e.getMessage());
+            this.close();
         }
     }
 
@@ -30,8 +29,7 @@ public class StorUser {
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, username);
         statement.setString(2, passowrd);
-
-
+        statement.executeUpdate();
 
     }
 
@@ -60,15 +58,13 @@ public class StorUser {
 
 
     boolean validate(String username, String password){
-        String query = "SELECT COUNT(*) AS hits FROM Account WHERE username = ? AND password = ?";
+        String query = "SELECT 1 FROM Account WHERE username = ? AND password = ?";
         try{
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1,username);
             statement.setString(2,password);
-            try(ResultSet rst = statement.executeQuery(query)){
-                if (rst.next()){
-                    return rst.getInt(1 ) == 1;
-                }
+            try(ResultSet rst = statement.executeQuery()){
+                return rst.next();
             }
         } catch (SQLException e) {
             System.out.println("faild finding the username" + e.getMessage());
@@ -76,22 +72,27 @@ public class StorUser {
         return false;
     }
 
-    boolean usernameExists(String username){
-        String query = "SELECT COUNT(*) AS hits FROM Account WHERE username = ?";
-        try{
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1,username);
-            try(ResultSet rst = statement.executeQuery(query)){
-                if (rst.next()){
-                    return rst.getInt(1 ) == 1;
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("faild finding the username" + e.getMessage());
-        }
-        return false;
-    }
+    public boolean usernameExists(String username) {
+        String query = "SELECT 1 FROM Account WHERE username = ?";
 
+        try (
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            // Set the parameter for the prepared statement
+            pstmt.setString(1, username);
+
+            // Execute the query and check the result
+            try (ResultSet rs = pstmt.executeQuery()) {
+                // If there is a result, the username exists
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return false;  // Return false if an exception occurred or if no results were found
+    }
 
 
 

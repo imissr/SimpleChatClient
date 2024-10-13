@@ -24,6 +24,7 @@ public class ThreadReader extends Thread {
         while(true){
             try {
                 String responce  = reader.readLine();
+                System.out.println("response from client");
                 System.out.println("\n" + responce);
                 if (client.getUsername() != null) {
                     System.out.print("[" + client.getUsername() + "]: ");
