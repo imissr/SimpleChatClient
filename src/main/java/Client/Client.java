@@ -13,13 +13,13 @@ public class Client {
     private int port;
     private String password;
     private int choice;
+    private boolean logged;
 
 
 
-    public Client(String hostname , int port ){
+    public Client(String hostname , int port){
         this.hostname = hostname;
         this.port = port;
-        this.init();
 
     }
 
@@ -28,11 +28,14 @@ public class Client {
             Socket socket = new Socket(hostname , port);
             System.out.println("Connected to the chat server");
 
+            ThreadReader readerThread = new ThreadReader(socket,this);
+            ThreadWriter writerThread = new ThreadWriter(socket,this);
 
-            ThreadReader reader = new ThreadReader(socket,this);
-            reader.start();
-            ThreadWriter writer = new ThreadWriter(socket,this);
-            writer.start();
+            readerThread.start();
+            writerThread.start();
+
+
+
         }catch (UnknownHostException ex) {
             System.out.println("Server not found: " + ex.getMessage());
         } catch (IOException ex) {
@@ -42,60 +45,65 @@ public class Client {
 
 
 
-   void loginprompt() {
+
+   void loginPrompt() {
         Scanner scanner = new Scanner(System.in);
-        while(true){
-            System.out.println("Enter the port: ");
-            port = scanner.nextInt();
-            scanner.nextLine();
+       do {
+           System.out.println("Enter the port: ");
+           String portString = scanner.nextLine();
+           if(!Utility.isValidPortSyntax(portString)){
+               continue;
+           }
+           port = Integer.parseInt(portString);
 
-            System.out.println("Enter the hostname: ");
-            hostname = scanner.nextLine();
-            if(Utility.pingServer(hostname,1000)){
-                break;
-            }
-        }
+           System.out.println("Enter the hostname: ");
+           hostname = scanner.nextLine();
+       } while (!Utility.pingServer(hostname, 1000));
 
-        //label the looop!!!!
-        outtorLoop:
+
         while (true) {
             System.out.println("1. Sign In");
             System.out.println("2. Sign Up");
             System.out.println("3. Exit");
             System.out.print("Choose an option: ");
-            choice = scanner.nextInt();
-            scanner.nextLine();
+
+            String choiceString = scanner.nextLine();
+            if(!Utility.isNumericString(choiceString)){
+                System.out.println("Invalid choice!");
+                continue;
+            }
+
+            choice = Integer.parseInt(choiceString);
+
 
             switch (choice) {
-                case 1:
+                case 1 -> {
                     System.out.print("Enter username: ");
                     this.username = scanner.nextLine();
                     System.out.print("Enter password: ");
                     this.password = scanner.nextLine();
-                    if(Utility.isValidUsername(this.username)){
-                        break outtorLoop;
+                    if (Utility.isValidUsername(this.username)) {
+                        return;
                     }
                     System.out.println("username contains invalid character");
-                    break;
+                }
 
 
 
-                case 2:
+                case 2 -> {
+                    //TODO
                     System.out.print("Enter username: ");
                     String registerUsername = scanner.nextLine();
                     System.out.print("Enter password: ");
                     String registerPassword = scanner.nextLine();
-                    if(Utility.isValidUsername(this.username)){
-                        break outtorLoop;
+                    if (Utility.isValidUsername(this.username)) {
+                       return ;
                     }
                     System.out.println("username contains invalid character");
-                    break;
+                }
 
 
-                default:
-                    System.out.println("Invalid input");
-                    break;
-
+                default -> System.out.println("Invalid input");
             }
         }
     }
@@ -121,4 +129,18 @@ public class Client {
         this.password = password;
     }
 
+    public void setLogged(boolean logged) {
+        this.logged = logged;
+    }
+
+    public boolean isLogged() {
+        return logged;
+    }
+
+
+    public static void main(String[] args) {
+        Client c1 = new Client("" , 12345);
+        c1.loginPrompt();
+        c1.init();
+    }
 }

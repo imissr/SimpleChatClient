@@ -31,28 +31,18 @@ public class ClientHandler implements Runnable {
         try {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer  = new PrintWriter(socket.getOutputStream(),true);
-            printUser();
-            System.out.println(username);
-            server.addUserName(username);
-            String password = reader.readLine();
-            System.out.println(password);
+
+            while(true){
+                //System.out.println("checkpassword CLientHan: " + checkPasswordAndUsername());
+                if(checkPasswordAndUsername()){
+                    break;
+                }
+            }
             String serverMessage = "new user connected to the Chat:  " + username;
             server.boardcastMessage(serverMessage, this);
+            String text = null;
+            chat(text);
 
-            String text ;
-
-            do{
-
-                text = reader.readLine();
-                serverMessage = "[" + username + "]: " + text;
-                server.boardcastMessage(serverMessage,this);
-            }while(!text.equalsIgnoreCase("exit"));
-
-            server.removeUser(username,this);
-            socket.close();
-
-            serverMessage = username + " has quitted.";
-            server.boardcastMessage(serverMessage, this);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -77,32 +67,55 @@ public class ClientHandler implements Runnable {
         password = reader.readLine();
         choice = Integer.parseInt(reader.readLine());
 
-        switch (choice){
+         return switch (choice){
             case 1 :
                 if(server.loginSuccessful(username,password)){
                     writer.println("OK");
-                    return true;
+                    yield  true;
                 }
                 writer.println("ERROR");
-                return false;
+                yield false;
 
 
             case 2 :
                 if(!server.registerSuccessful(username,password) ){
-                    writer.println("Error");
-                    return false;
+                    writer.println("ERROR");
+                    yield false;
                 }
                 writer.println("OK");
-                return true;
+                yield true;
 
             default:
-                writer.println(false);
-                return false;
+                writer.println("ERROR");
+                yield false;
+        };
+
+
+
+
+
+    }
+
+    public void chat( String text ){
+        try {
+            String serverMessage;
+        do{
+            text = reader.readLine();
+
+            serverMessage = "[" + username + "]: " + text;
+            server.boardcastMessage(serverMessage,this);
+        }while(!text.equalsIgnoreCase("exit"));
+
+
+        server.removeUser(username,this);
+        socket.close();
+
+        serverMessage = username + " has quitted.";
+        server.boardcastMessage(serverMessage, this);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-
-
-
     }
 
 

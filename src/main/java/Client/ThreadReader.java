@@ -10,6 +10,7 @@ public class ThreadReader extends Thread {
     private Socket socket;
     private Client client;
 
+
     ThreadReader(Socket socket , Client client){
         this.client = client;
         this.socket = socket;
@@ -21,6 +22,40 @@ public class ThreadReader extends Thread {
     }
 
     public void run(){
+        try {
+        while(true){
+            if(readToken()){
+                break;
+            }
+        }
+
+        hear();
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+    public String reciveMessage() throws IOException {
+        return reader.readLine();
+    }
+
+    public boolean readToken() throws IOException {
+        String token = reader.readLine();
+        //System.out.println(token);
+        if(token != null){
+            if(token.equalsIgnoreCase("OK")){
+                client.setLogged(true);
+                return true;
+            }
+            client.setLogged(false);
+            return false;
+        }
+        return false;
+    }
+
+    public void hear(){
         while(true){
             try {
                 String responce  = reader.readLine();
@@ -35,11 +70,7 @@ public class ThreadReader extends Thread {
                 break;
             }
         }
-
-
     }
 
-    public String reciveMessage() throws IOException {
-        return reader.readLine();
-    }
+
 }

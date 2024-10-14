@@ -25,8 +25,16 @@ public class ThreadWriter extends Thread {
 
    public void run(){
 
-        handshake();
 
+
+        while(true){
+
+            if(client.isLogged()){
+                break;
+            }else{
+                handshake();
+            }
+        }
 
         Console console = System.console();
 
@@ -49,6 +57,7 @@ public class ThreadWriter extends Thread {
 
 
     public void handshake(){
+        //System.out.println("ThreadWriter : " + client.getUsername() +client.getPassword() + client.getChoice() );
         writer.println(client.getUsername());
         writer.println(client.getPassword());
         writer.println(client.getChoice());
