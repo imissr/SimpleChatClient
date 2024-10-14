@@ -92,27 +92,13 @@ public class Client {
 
 
             switch (choice) {
-                case 1 -> {
+                case 1, 2 -> {
                     System.out.print("Enter username: ");
                     this.username = scanner.nextLine();
                     System.out.print("Enter password: ");
                     this.password = scanner.nextLine();
                     if (Utility.isValidUsername(this.username)) {
                         return;
-                    }
-                    System.out.println("username contains invalid character");
-                }
-
-
-
-                case 2 -> {
-                    //TODO
-                    System.out.print("Enter username: ");
-                    String registerUsername = scanner.nextLine();
-                    System.out.print("Enter password: ");
-                    String registerPassword = scanner.nextLine();
-                    if (Utility.isValidUsername(this.username)) {
-                       return ;
                     }
                     System.out.println("username contains invalid character");
                 }

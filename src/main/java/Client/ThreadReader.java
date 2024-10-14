@@ -37,9 +37,6 @@ public class ThreadReader extends Thread {
 
     }
 
-    public String reciveMessage() throws IOException {
-        return reader.readLine();
-    }
 
     public boolean readToken() throws IOException {
         String token = reader.readLine();
@@ -58,7 +55,6 @@ public class ThreadReader extends Thread {
         while(true){
             try {
                 String responce  = reader.readLine();
-                System.out.println("response from client");
                 System.out.println("\n" + responce);
                 if (client.getUsername() != null) {
                     System.out.print("[" + client.getUsername() + "]: ");
