@@ -13,7 +13,8 @@ public class Client {
     private int port;
     private String password;
     private int choice;
-    private boolean logged;
+    private boolean logged = false;
+    private boolean loginFailed = false;
 
 
 
@@ -25,6 +26,7 @@ public class Client {
 
     public void init(){
         try{
+            loginPrompt();
             Socket socket = new Socket(hostname , port);
             System.out.println("Connected to the chat server");
 
@@ -34,12 +36,25 @@ public class Client {
             readerThread.start();
             writerThread.start();
 
+            // Main login loop; only attempt login, no reconnection needed
+            while (!logged) {
+                // Loop until login is successful (threadReader will update this)
+                Thread.sleep(100);  // Wait for login status update
+            }
+
+            System.out.println("You are now logged in. Start chatting!");
+
+            // Proceed with chatting after login
+            readerThread.join();  // Wait for the reader thread to complete (handle chat messages)
+
 
 
         }catch (UnknownHostException ex) {
             System.out.println("Server not found: " + ex.getMessage());
         } catch (IOException ex) {
             System.out.println("I/O Error: " + ex.getMessage());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -113,10 +128,6 @@ public class Client {
     }
 
 
-    public String getUsername() {
-        return username;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }
@@ -137,10 +148,28 @@ public class Client {
         return logged;
     }
 
+    public void setLoginFailed(boolean loginFailed) {
+        this.loginFailed = loginFailed;
+    }
+
+    public boolean hasLoginFailed() {
+        return loginFailed;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void requestCredentials(Scanner scanner) {
+        System.out.println("Enter username: ");
+        this.username = scanner.nextLine();
+        System.out.println("Enter password: ");
+        this.password = scanner.nextLine();
+    }
+
 
     public static void main(String[] args) {
         Client c1 = new Client("" , 12345);
-        c1.loginPrompt();
         c1.init();
     }
 }

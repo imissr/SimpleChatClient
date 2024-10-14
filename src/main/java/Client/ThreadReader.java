@@ -43,13 +43,12 @@ public class ThreadReader extends Thread {
 
     public boolean readToken() throws IOException {
         String token = reader.readLine();
-        //System.out.println(token);
         if(token != null){
             if(token.equalsIgnoreCase("OK")){
                 client.setLogged(true);
                 return true;
             }
-            client.setLogged(false);
+            client.setLoginFailed(true);
             return false;
         }
         return false;

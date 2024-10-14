@@ -4,11 +4,13 @@ import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class ThreadWriter extends Thread {
     private PrintWriter writer;
     private Socket socket;
     private Client client;
+    private Scanner scanner = new Scanner(System.in);
 
     public ThreadWriter(Socket socket , Client client){
         this.socket = socket;
@@ -26,13 +28,16 @@ public class ThreadWriter extends Thread {
    public void run(){
 
 
-
-        while(true){
-
-            if(client.isLogged()){
-                break;
-            }else{
+        while (!client.isLogged()){
+            try {
                 handshake();
+                Thread.sleep(100);
+                if (client.hasLoginFailed()) {
+                    client.requestCredentials(scanner);  // Re-prompt for new credentials
+                    client.setLoginFailed(false);  // Reset the login failure flag
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 
