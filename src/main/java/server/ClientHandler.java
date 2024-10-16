@@ -18,14 +18,14 @@ public class ClientHandler implements Runnable {
     BufferedReader reader;
     int choice;
 
-
+//better to use a webSocket
 
     public ClientHandler(Socket socket , Server server){
         this.socket = socket;
         this.server = server;
 
     }
-
+    //TODO client handler should handle the choice
     @Override
     public void run() {
         try {
@@ -33,13 +33,16 @@ public class ClientHandler implements Runnable {
             writer  = new PrintWriter(socket.getOutputStream(),true);
 
             while(true){
-                //System.out.println("checkpassword CLientHan: " + checkPasswordAndUsername());
                 if(checkPasswordAndUsername()){
                     break;
                 }
             }
             String serverMessage = "new user connected to the Chat:  " + username;
+            server.addUserName(this.username);
+            printUser();
             server.boardcastMessage(serverMessage, this);
+
+
             String text = null;
             chat(text);
 
@@ -91,9 +94,6 @@ public class ClientHandler implements Runnable {
         };
 
 
-
-
-
     }
 
     public void chat( String text ){
@@ -118,12 +118,22 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    //TODO
+    public boolean handleChoice() throws IOException {
+        choice = Integer.parseInt(reader.readLine());
+        switch (choice){
+            case 1 -> {
+               writer.println("OK");
+               return  true;
+            }
+        }
+
+        return true;
+    }
 
 
 
-
-
-
-
-
+    public String getUsername() {
+        return username;
+    }
 }

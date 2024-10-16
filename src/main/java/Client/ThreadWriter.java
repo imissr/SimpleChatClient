@@ -33,7 +33,8 @@ public class ThreadWriter extends Thread {
                 handshake();
                 Thread.sleep(100);
                 if (client.hasLoginFailed()) {
-                    client.requestCredentials(scanner);  // Re-prompt for new credentials
+                    System.out.println("login/register failed");
+                    client.loginPrompt();  // Re-prompt for new credentials
                     client.setLoginFailed(false);  // Reset the login failure flag
                 }
             } catch (InterruptedException e) {
@@ -41,31 +42,44 @@ public class ThreadWriter extends Thread {
             }
         }
 
-        Console console = System.console();
+        client.chatPrompt();
+        sendChoice();
 
-       String text;
-
-       do {
-           text = console.readLine("[" + client.getUsername() + "]: ");
-           writer.println(text);
-
-       } while (!text.equals("exit"));
-
-       try {
-           socket.close();
-       } catch (IOException ex) {
-
-           System.out.println("Error writing to server: " + ex.getMessage());
-       }
 
    }
 
 
     public void handshake(){
-        //System.out.println("ThreadWriter : " + client.getUsername() +client.getPassword() + client.getChoice() );
         writer.println(client.getUsername());
         writer.println(client.getPassword());
         writer.println(client.getChoice());
+    }
+
+    public void sendChoice(){
+        writer.println(client.getChoice());
+    }
+
+    public void closeConnection() throws IOException {
+        socket.close();
+    }
+
+    public void chat(){
+        Console console = System.console();
+
+        String text;
+
+        do {
+            text = console.readLine("[" + client.getUsername() + "]: ");
+            writer.println(text);
+
+        } while (!text.equals("exit"));
+
+        try {
+            closeConnection();
+        } catch (IOException ex) {
+
+            System.out.println("Error writing to server: " + ex.getMessage());
+        }
     }
 
 }

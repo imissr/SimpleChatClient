@@ -24,11 +24,15 @@ public class ThreadReader extends Thread {
     public void run(){
         try {
         while(true){
-            if(readToken()){
+            if(readTokenLoginReg()){
                 break;
             }
         }
-
+        while(true){
+            if(readTokenChoice()){
+                break;
+            }
+        }
         hear();
         }catch (IOException e) {
             throw new RuntimeException(e);
@@ -37,11 +41,8 @@ public class ThreadReader extends Thread {
 
     }
 
-    public String reciveMessage() throws IOException {
-        return reader.readLine();
-    }
 
-    public boolean readToken() throws IOException {
+    public boolean readTokenLoginReg() throws IOException {
         String token = reader.readLine();
         if(token != null){
             if(token.equalsIgnoreCase("OK")){
@@ -54,11 +55,24 @@ public class ThreadReader extends Thread {
         return false;
     }
 
+
+    public boolean readTokenChoice() throws IOException {
+        String token = reader.readLine();
+        if(token != null){
+            if(token.equalsIgnoreCase("OK")){
+                client.setChatChoice(true);
+                return true;
+            }
+            client.setChatChoiceFaild(true);
+            return false;
+        }
+        return false;
+    }
+
     public void hear(){
         while(true){
             try {
                 String responce  = reader.readLine();
-                System.out.println("response from client");
                 System.out.println("\n" + responce);
                 if (client.getUsername() != null) {
                     System.out.print("[" + client.getUsername() + "]: ");
@@ -70,6 +84,9 @@ public class ThreadReader extends Thread {
             }
         }
     }
+
+
+
 
 
 }

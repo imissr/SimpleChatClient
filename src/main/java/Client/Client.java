@@ -15,6 +15,11 @@ public class Client {
     private int choice;
     private boolean logged = false;
     private boolean loginFailed = false;
+    ThreadReader readerThread;
+    ThreadWriter writerThread;
+    Socket socket;
+    private boolean chatChoice = false;
+    private boolean chatChoiceFaild = false;
 
 
 
@@ -27,25 +32,23 @@ public class Client {
     public void init(){
         try{
             loginPrompt();
-            Socket socket = new Socket(hostname , port);
-            System.out.println("Connected to the chat server");
+            if(choice != 3){
+                socket = new Socket(hostname , port);
+                System.out.println("Connected to the chat server");
+                readerThread = new ThreadReader(socket,this);
+                writerThread = new ThreadWriter(socket,this);
 
-            ThreadReader readerThread = new ThreadReader(socket,this);
-            ThreadWriter writerThread = new ThreadWriter(socket,this);
+                readerThread.start();
+                writerThread.start();
 
-            readerThread.start();
-            writerThread.start();
+                // Main login loop; only attempt login, no reconnection needed
+                while (!logged) {
+                    // Loop until login is successful (threadReader will update this)
+                    Thread.sleep(100);  // Wait for login status update
+                }
 
-            // Main login loop; only attempt login, no reconnection needed
-            while (!logged) {
-                // Loop until login is successful (threadReader will update this)
-                Thread.sleep(100);  // Wait for login status update
+                System.out.println("You are now logged in. Start chatting!");
             }
-
-            System.out.println("You are now logged in. Start chatting!");
-
-            // Proceed with chatting after login
-            readerThread.join();  // Wait for the reader thread to complete (handle chat messages)
 
 
 
@@ -92,7 +95,7 @@ public class Client {
 
 
             switch (choice) {
-                case 1 -> {
+                case 1, 2 -> {
                     System.out.print("Enter username: ");
                     this.username = scanner.nextLine();
                     System.out.print("Enter password: ");
@@ -102,19 +105,8 @@ public class Client {
                     }
                     System.out.println("username contains invalid character");
                 }
-
-
-
-                case 2 -> {
-                    //TODO
-                    System.out.print("Enter username: ");
-                    String registerUsername = scanner.nextLine();
-                    System.out.print("Enter password: ");
-                    String registerPassword = scanner.nextLine();
-                    if (Utility.isValidUsername(this.username)) {
-                       return ;
-                    }
-                    System.out.println("username contains invalid character");
+                case 3 ->{
+                    return;
                 }
 
 
@@ -127,10 +119,6 @@ public class Client {
         return choice;
     }
 
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     public String getPassword() {
         return password;
@@ -160,12 +148,49 @@ public class Client {
         return username;
     }
 
+    public void setChatChoice(boolean chatChoice) {
+        this.chatChoice = chatChoice;
+    }
+
+    public boolean isChatChoice() {
+        return chatChoice;
+    }
+
+    public void setChatChoiceFaild(boolean chatChoiceFaild) {
+        this.chatChoiceFaild = chatChoiceFaild;
+    }
+
+    public boolean isChatChoiceFaild() {
+        return chatChoiceFaild;
+    }
+
     public void requestCredentials(Scanner scanner) {
         System.out.println("Enter username: ");
         this.username = scanner.nextLine();
         System.out.println("Enter password: ");
         this.password = scanner.nextLine();
     }
+
+    public void chatPrompt(){
+        Scanner scanner = new Scanner(System.in);
+
+        while(true){
+            System.out.println("1.Private Chat");
+            System.out.println("2.Chat room");
+            System.out.println("3.global chat");
+            System.out.println("4.logout");
+            System.out.print("Choose an option: ");
+            choice = Integer.parseInt(scanner.nextLine());
+            //TODO
+            switch (choice){
+                case 1 -> {
+
+                }
+            }
+
+        }
+    }
+
 
 
     public static void main(String[] args) {

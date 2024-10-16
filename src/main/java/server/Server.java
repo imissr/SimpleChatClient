@@ -4,6 +4,7 @@ import server.loginService.Login;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -62,6 +63,14 @@ public class Server {
         }
     }
 
+    public void boardcastMessageToClient(String message , ClientHandler target){
+        for (ClientHandler clients : clientsHandler){
+            if(target.equals(clients)){
+                clients.sendMessage(message);
+            }
+        }
+    }
+
 
     void removeUser(String userName, ClientHandler aUser) {
         boolean removed = clientsUsername.remove(userName);
@@ -75,6 +84,7 @@ public class Server {
     public void addUserName(String username){
         clientsUsername.add(username);
     }
+
     public Set<String> getClientsUsername(){
         return this.clientsUsername;
     }
@@ -89,6 +99,7 @@ public class Server {
     public boolean registerSuccessful(String username , String password){
         return loginService.register(username,password);
     }
+
 
 
     public static void main(String[] args) {
