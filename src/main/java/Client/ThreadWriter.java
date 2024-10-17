@@ -40,8 +40,18 @@ public class ThreadWriter extends Thread {
                 throw new RuntimeException(e);
             }
         }
+        //client.chatPrompt();
+        //sendChoice();
+        text();
 
-        Console console = System.console();
+   }
+
+   public void sendChoice(){
+        writer.println(client.getChoice());
+   }
+
+   public void text(){
+       Console console = System.console();
 
        String text;
 
@@ -57,7 +67,6 @@ public class ThreadWriter extends Thread {
 
            System.out.println("Error writing to server: " + ex.getMessage());
        }
-
    }
 
 

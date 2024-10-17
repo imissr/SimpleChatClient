@@ -11,26 +11,32 @@ public class ThreadReader extends Thread {
     private Client client;
 
 
-    ThreadReader(Socket socket , Client client){
+    ThreadReader(Socket socket, Client client) {
         this.client = client;
         this.socket = socket;
-        try{
+        try {
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Error getting input stream: " + e.getMessage());
         }
     }
 
-    public void run(){
+    public void run() {
         try {
-        while(true){
-            if(readToken()){
-                break;
+            while (true) {
+                if (readTokenLogin()) {
+                    break;
+                }
             }
-        }
 
-        hear();
-        }catch (IOException e) {
+           /* while (true) {
+                if (readTokenChatPrompt()) {
+                    break;
+                }
+            }*/
+
+            hear();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -38,10 +44,10 @@ public class ThreadReader extends Thread {
     }
 
 
-    public boolean readToken() throws IOException {
+    public boolean readTokenLogin() throws IOException {
         String token = reader.readLine();
-        if(token != null){
-            if(token.equalsIgnoreCase("OK")){
+        if (token != null) {
+            if (token.equalsIgnoreCase("OK")) {
                 client.setLogged(true);
                 return true;
             }
@@ -51,21 +57,41 @@ public class ThreadReader extends Thread {
         return false;
     }
 
-    public void hear(){
-        while(true){
-            try {
-                String responce  = reader.readLine();
-                System.out.println("\n" + responce);
-                if (client.getUsername() != null) {
-                    System.out.print("[" + client.getUsername() + "]: ");
+    public boolean readTokenChatPrompt() throws IOException {
+        String token = reader.readLine();
+
+        if (token != null) {
+            if (token.equalsIgnoreCase("OK")) {
+                if (client.getChoice() == 1) {
+                    client.setChatTypePr(true);
+                } else if (client.getChoice() == 2) {
+                    client.setChatTypeGl(true);
+                } else{
+                    return false;
                 }
-            } catch (IOException e) {
-                System.out.println("Error reading from server: " + e.getMessage());
-                e.printStackTrace();
-                break;
+                return true;
             }
+
         }
+        return false;
     }
 
+        public void hear() {
+            while (true) {
+                try {
+                    String responce = reader.readLine();
+                    System.out.println("\n" + responce);
+                    if (client.getUsername() != null) {
+                        System.out.print("[" + client.getUsername() + "]: ");
+                    }
+                } catch (IOException e) {
+                    System.out.println("Error reading from server: " + e.getMessage());
+                    e.printStackTrace();
+                    break;
+                }
+            }
+        }
 
-}
+
+    }
+

@@ -34,27 +34,7 @@ public class StorUser {
     }
 
 
-    // bad for security reason retriving password and username can be seen in the stack
-    /*private String getPassword(String username){
-        String query = "SELECT password from Account WHERE useername = ? ";
-        try {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1,username);
 
-            try(ResultSet rs = statement.executeQuery()) {
-                if(rs.next()){
-                    String password = rs.getNString("password");
-                    return password;
-                }
-
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-
-        }
-        return "no password found";
-    }*/
 
 
     boolean validate(String username, String password){

@@ -33,12 +33,13 @@ public class ClientHandler implements Runnable {
             writer  = new PrintWriter(socket.getOutputStream(),true);
 
             while(true){
-                //System.out.println("checkpassword CLientHan: " + checkPasswordAndUsername());
                 if(checkPasswordAndUsername()){
                     break;
                 }
             }
             String serverMessage = "new user connected to the Chat:  " + username;
+            server.addUserName(this.username);
+            printUser();
             server.boardcastMessage(serverMessage, this);
             String text = null;
             chat(text);
@@ -90,13 +91,19 @@ public class ClientHandler implements Runnable {
                 yield false;
         };
 
+    }
 
-
-
+    void readChoice() throws IOException {
+        choice = Integer.parseInt(reader.readLine());
+        writer.println("OK");
 
     }
 
-    public void chat( String text ){
+    public String getUsername() {
+        return username;
+    }
+
+    public void chat(String text ){
         try {
             String serverMessage;
         do{

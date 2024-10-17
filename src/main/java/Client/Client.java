@@ -15,6 +15,10 @@ public class Client {
     private int choice;
     private boolean logged = false;
     private boolean loginFailed = false;
+    private boolean chatTypePr= false;  //true private chat active
+    private boolean chatTypeGl= false; // true global chat active
+
+
 
 
 
@@ -109,6 +113,25 @@ public class Client {
         }
     }
 
+
+   /* public void chatPrompt(){
+        Scanner scanner = new Scanner(System.in);
+        choice = 0;
+        while (true){
+            System.out.println("1. private Chat");
+            System.out.println("2. global Chat");
+            System.out.print("Choose an option: ");
+
+            String choiceString = scanner.nextLine();
+            if(!Utility.isNumericString(choiceString)){
+                System.out.println("Invalid choice!");
+                continue;
+            }
+            choice = Integer.parseInt(choiceString);
+
+        }
+    }*/
+
     public int getChoice() {
         return choice;
     }
@@ -144,6 +167,14 @@ public class Client {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setChatTypePr(boolean chatTypePr) {
+        this.chatTypePr = chatTypePr;
+    }
+
+    public void setChatTypeGl(boolean chatTypeGl) {
+        this.chatTypeGl = chatTypeGl;
     }
 
     public void requestCredentials(Scanner scanner) {

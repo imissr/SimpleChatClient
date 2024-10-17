@@ -42,17 +42,7 @@ public class Server {
         }
     }
 
-    public void closeConnection(){
-        try{
-            if(socket != null){
-                socket.close();
-            }
 
-
-        }catch(IOException e){
-            System.out.println("Server Socket closed" + e.getMessage());
-        }
-    }
 
     public void boardcastMessage(String message , ClientHandler clientsEx){
         for (ClientHandler clients : clientsHandler){
@@ -60,6 +50,13 @@ public class Server {
                clients.sendMessage(message);
             }
         }
+    }
+
+    public void boardcastMessageFromTo(String message  ,ClientHandler from , ClientHandler target){
+
+        String formatedMessage = "private Message from: " + from.getUsername() + ": " + message;
+        target.sendMessage(formatedMessage);
+
     }
 
 
